@@ -1,7 +1,6 @@
 .git
 .github
 *.md
-examples
 __pycache__
 *.pyc
 .env
