@@ -133,6 +133,24 @@ Example request shape:
 
 Use a webhook for real H3 generations because the Salad Container Gateway max request timeout is 100 seconds.
 
+### Sequential I2V batches and result links
+
+`scripts/h3_i2v_batch_runner.py` runs a supplied batch sequentially. It submits one `/prompt` request at a time with `webhook_v2`, waits for that job's completion callback on the container loopback interface, uploads the MP4, and updates an S3 status document and HTML gallery after every completed video. The runner stops on the first failed job so a broken workflow does not consume the rest of the batch budget.
+
+The runner takes a base64-encoded, short-lived S3 GET URL for a private batch configuration. That configuration contains `batch_id`, `total`, `width`, `height`, the reference-image GET URL, status and gallery PUT URLs, optional `initial_completed` entries, and `jobs`. Each job has `id`, `file`, `duration_s`, `prompt`, `output_key`, `put_url`, and `get_url`. Generate these URLs with a storage-side signer; do not commit the configuration, signed URLs, or S3 credentials.
+
+Example launch inside the running container:
+
+```bash
+python3 /opt/h3/scripts/h3_i2v_batch_runner.py \
+  --config-url-b64 "$H3_BATCH_CONFIG_URL_B64" \
+  --log-file /tmp/h3-i2v-batch.log
+```
+
+The status object tracks the current job, completed videos, and failures. The gallery URL opens completed MP4s without SSH access. Signed gallery and video links expire according to the storage-side URL lifetime.
+
+Keep `SaveVideo.filename_prefix` at the output root (without a subfolder such as `video/`). Salad ComfyUI API 1.19.2 reads outputs by filename and does not resolve ComfyUI subfolders, which can otherwise produce an empty `filenames` response.
+
 ## Quality mode
 
 The included 8-step Turbo LoRA is intended as the default final-render compromise.

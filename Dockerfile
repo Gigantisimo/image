@@ -18,10 +18,11 @@ RUN apt-get update \
 RUN uv pip install --system --no-cache-dir --upgrade "huggingface_hub[cli]==2.0.0" \
     && hf version
 
-RUN mkdir -p /opt/h3 /opt/h3/examples /workflows
+RUN mkdir -p /opt/h3 /opt/h3/examples /opt/h3/scripts /workflows
 
 COPY manifest.yaml /opt/h3/manifest.yaml
 COPY examples/ /opt/h3/examples/
+COPY scripts/ /opt/h3/scripts/
 
 ENV MANIFEST=/opt/h3/manifest.yaml
 ENV PORT=3000

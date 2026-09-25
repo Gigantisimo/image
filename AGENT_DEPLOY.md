@@ -156,6 +156,10 @@ Insert the whole example JSON as the value of `prompt`.
 
 Use async requests with `webhook_v2`. Salad Container Gateway has a 100 second maximum timeout and H3 generation can exceed it.
 
+For sequential I2V batches, use `/opt/h3/scripts/h3_i2v_batch_runner.py`. It sends one request at a time, receives `webhook_v2` completion locally, uploads each MP4 to a pre-signed S3 URL, and refreshes a status JSON and HTML gallery after every successful job. Prepare a private batch config with short-lived S3 GET/PUT URLs; never put storage credentials or signed URLs in this repository. The runner stops after its first failed job.
+
+Keep `SaveVideo.filename_prefix` at the output root. The 1.19.2 wrapper reads saved outputs without resolving a non-empty ComfyUI subfolder.
+
 ## 10. Failure triage
 
 ### Image Not Found

@@ -116,7 +116,7 @@
   },
   "53": {
     "inputs": {
-      "filename_prefix": "video/minimax_h3_i2v",
+      "filename_prefix": "minimax_h3_i2v",
       "format": "mp4",
       "codec": "h264",
       "codec.encoding": "auto",
