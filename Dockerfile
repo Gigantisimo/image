@@ -10,6 +10,14 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
+# The current Salad base image contains huggingface_hub 1.16.1.
+# Its `hf version` command is failing in this runtime, so comfyui-api does not
+# detect the Hugging Face provider and falls back to its generic HTTP provider.
+# Upgrade to the current CLI and verify it during image build so H3 model
+# downloads use the dedicated Hugging Face/Xet path.
+RUN uv pip install --system --no-cache-dir --upgrade "huggingface_hub[cli]==2.0.0" \
+    && hf version
+
 RUN mkdir -p /opt/h3 /opt/h3/examples /workflows
 
 COPY manifest.yaml /opt/h3/manifest.yaml
